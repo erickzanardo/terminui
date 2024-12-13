@@ -1,7 +1,7 @@
 name: terminui
 description: "An extensible and customizable terminal like view to be interacted with commands."
 version: 0.1.0
-homepage:
+homepage: https://github.com/erickzanardo/terminui
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
