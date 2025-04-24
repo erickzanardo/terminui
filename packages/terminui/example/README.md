@@ -1,3 +1,3 @@
-# flame_console example
+# terminui example
 
-Example of using the flame console package
+Example of using the terminui package
