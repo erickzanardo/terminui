@@ -115,8 +115,12 @@ class TerminuiController<S> {
 
       if (split.first == 'help') {
         final output = commands.entries.fold('', (previous, entry) {
-          final help = '${entry.key} - ${entry.value.description}\n\n'
-              '${entry.value.parser.usage}\n\n';
+          final help = '${entry.key} - ${entry.value.description}'
+              '${entry.value.parser.usage}';
+
+          state.value = state.value.copyWith(
+            cmd: '',
+          );
 
           return '$previous\n$help';
         });
