@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:terminui/terminui.dart';
@@ -160,7 +162,10 @@ class TerminuiController<S> {
       });
     } else if (event.logicalKey == LogicalKeyboardKey.backspace) {
       state.value = state.value.copyWith(
-        cmd: state.value.cmd.substring(0, state.value.cmd.length - 1),
+        cmd: state.value.cmd.substring(
+          0,
+          max(state.value.cmd.length - 1, 0),
+        ),
       );
     } else if (char != null) {
       state.value = state.value.copyWith(
