@@ -85,7 +85,6 @@ class TerminuiView<S> extends StatefulWidget {
 }
 
 class _TerminuiViewState extends State<TerminuiView> {
-
   late final repository = widget.repository ?? MemoryTerminuiRepository();
 
   late final Map<String, TerminuiCommand> _commandsMap = {

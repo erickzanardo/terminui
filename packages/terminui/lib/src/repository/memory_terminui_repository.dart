@@ -1,4 +1,3 @@
-
 import 'package:terminui/terminui.dart';
 
 /// An implementation of a [TerminuiRepository] that stores the command history
