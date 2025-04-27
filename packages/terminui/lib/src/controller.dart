@@ -164,7 +164,10 @@ class TerminuiController<S> {
       });
     } else if (event.logicalKey == LogicalKeyboardKey.backspace) {
       final cmd = state.value.cmd;
-      final endIndex = (cmd.length - 1).clampToLength(cmd.length);
+      final isControlPressed = HardwareKeyboard.instance.isControlPressed;
+      final endIndex =
+          (isControlPressed ? cmd.lastIndexOf(' ') : cmd.length - 1)
+              .clampToLength(cmd.length);
       state.value = state.value.copyWith(
         cmd: cmd.substring(0, endIndex),
       );
