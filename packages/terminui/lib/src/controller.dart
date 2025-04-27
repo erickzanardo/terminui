@@ -64,42 +64,40 @@ class TerminuiController<S> {
     }
     final char = event.character;
 
-    if (event.logicalKey == LogicalKeyboardKey.escape &&
-        !state.value.showHistory) {
+    final showHistory = state.value.showHistory;
+    final hasHistory = showHistory && state.value.commandHistory.isNotEmpty;
+
+    if (event.logicalKey == LogicalKeyboardKey.escape && !showHistory) {
       onClose();
-    } else if (event.logicalKey == LogicalKeyboardKey.arrowUp &&
-        !state.value.showHistory) {
+    } else if (event.logicalKey == LogicalKeyboardKey.arrowUp && !showHistory) {
       final newState = state.value.copyWith(
         showHistory: true,
         commandHistoryIndex: state.value.commandHistory.length - 1,
       );
       state.value = newState;
-    } else if (event.logicalKey == LogicalKeyboardKey.enter &&
-        state.value.showHistory) {
+    } else if (event.logicalKey == LogicalKeyboardKey.enter && showHistory) {
       final newState = state.value.copyWith(
-        cmd: state.value.commandHistory[state.value.commandHistoryIndex],
+        cmd: hasHistory
+            ? state.value.commandHistory[state.value.commandHistoryIndex]
+            : state.value.cmd,
         showHistory: false,
       );
       state.value = newState;
     } else if ((event.logicalKey == LogicalKeyboardKey.arrowUp ||
             event.logicalKey == LogicalKeyboardKey.arrowDown) &&
-        state.value.showHistory) {
+        hasHistory) {
+      final delta = event.logicalKey == LogicalKeyboardKey.arrowUp ? -1 : 1;
       final newState = state.value.copyWith(
-        commandHistoryIndex: event.logicalKey == LogicalKeyboardKey.arrowUp
-            ? (state.value.commandHistoryIndex - 1)
-                .clamp(0, state.value.commandHistory.length - 1)
-            : (state.value.commandHistoryIndex + 1)
-                .clamp(0, state.value.commandHistory.length - 1),
+        commandHistoryIndex: (state.value.commandHistoryIndex + delta)
+            .clampToLength(state.value.commandHistory.length),
       );
       state.value = newState;
-    } else if (event.logicalKey == LogicalKeyboardKey.escape &&
-        state.value.showHistory) {
+    } else if (event.logicalKey == LogicalKeyboardKey.escape && showHistory) {
       state.value = state.value.copyWith(
         showHistory: false,
       );
-    } else if (event.logicalKey == LogicalKeyboardKey.enter &&
-        !state.value.showHistory) {
-      final split = state.value.cmd.split(' ');
+    } else if (event.logicalKey == LogicalKeyboardKey.enter) {
+      final split = state.value.cmd.split(' ').where((e) => e.isNotEmpty);
 
       if (split.isEmpty) {
         return KeyEventResult.handled;
@@ -165,11 +163,10 @@ class TerminuiController<S> {
         scrollController.jumpTo(scrollController.position.maxScrollExtent);
       });
     } else if (event.logicalKey == LogicalKeyboardKey.backspace) {
+      final cmd = state.value.cmd;
+      final endIndex = (cmd.length - 1).clampToLength(cmd.length);
       state.value = state.value.copyWith(
-        cmd: state.value.cmd.substring(
-          0,
-          max(state.value.cmd.length - 1, 0),
-        ),
+        cmd: cmd.substring(0, endIndex),
       );
     } else if (char != null) {
       state.value = state.value.copyWith(
@@ -177,5 +174,13 @@ class TerminuiController<S> {
       );
     }
     return KeyEventResult.handled;
+  }
+}
+
+extension on int {
+  int clampToLength(int length) {
+    // NOTE: this required due to a bug with the Dart compiler
+    // ignore: unnecessary_this
+    return this.clamp(0, max(0, length - 1));
   }
 }
