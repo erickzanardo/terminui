@@ -188,7 +188,7 @@ class _TerminuiViewState extends State<TerminuiView> {
                               padding: const EdgeInsets.only(top: 8.0),
                               child: ColoredBox(
                                 color: i == state.commandHistoryIndex
-                                    ? cursorColor.withOpacity(.5)
+                                    ? cursorColor.withValues(alpha: .5)
                                     : Colors.transparent,
                                 child: Text(
                                   state.commandHistory[i],
