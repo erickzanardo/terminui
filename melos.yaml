@@ -1,0 +1,36 @@
+name: terminui
+repository: https://github.com/erickzanardo/terminui
+
+packages:
+  - packages/*
+
+command:
+  version:
+    # Only allow versioning to happen on main branch.
+    branch: main
+    # Generates a link to a prefilled GitHub release creation page.
+    releaseUrl: true
+    includeCommitId: true
+    linkToCommits: true
+
+  bootstrap:
+    environment:
+      sdk: ">=3.6.0 <4.0.0"
+      flutter: ">=3.27.1"
+
+scripts:
+  lint:
+    steps:
+      - analyze
+      - format
+    description: Run all static analysis checks.
+
+  analyze:
+    run: melos exec dart analyze .
+    description: Run `dart analyze` for all packages.
+
+  format-check:
+    run: melos exec dart format . --set-exit-if-changed
+    description: Run `dart format` checks for all packages.
+
+  upgrade: melos exec flutter pub upgrade
