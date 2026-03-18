@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:terminui/src/controller.dart';
 import 'package:terminui/src/view/container_builder.dart';
 import 'package:terminui/src/view/cursor_builder.dart';
 import 'package:terminui/src/view/history_builder.dart';
 import 'package:terminui/terminui.dart';
 
-typedef KeyEventCallback = KeyEventResult? Function(KeyEvent event);
+typedef KeyEventCallback = KeyEventResult? Function(
+  KeyEvent event,
+  Set<LogicalKeyboardKey> keysPressed,
+);
 
 class KeyboardEventEmitter {
   final List<KeyEventCallback> _listeners = [];
@@ -18,9 +22,9 @@ class KeyboardEventEmitter {
     _listeners.remove(listener);
   }
 
-  KeyEventResult emit(KeyEvent event) {
+  KeyEventResult emit(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     for (final listener in _listeners) {
-      final result = listener(event);
+      final result = listener(event, keysPressed);
       if (result != null) {
         return result;
       }
@@ -213,9 +217,15 @@ class _TerminuiViewState extends State<TerminuiView> {
                   context,
                   Row(
                     children: [
-                      Text(state.cmd, style: textStyle),
-                      SizedBox(width: (textStyle?.fontSize ?? 12) / 4),
+                      Text(
+                        state.cmd.substring(0, state.cursorPosition),
+                        style: textStyle,
+                      ),
                       cursorBuilder(context),
+                      Text(
+                        state.cmd.substring(state.cursorPosition),
+                        style: textStyle,
+                      ),
                     ],
                   ),
                 ),
