@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:terminui/terminui.dart';
 
 class MediaQueryWidthCommand extends TerminuiCommand<BuildContext> {
@@ -53,8 +54,11 @@ class _MyGameAppState extends State<MyGameApp> {
     _node = FocusNode()..requestFocus();
 
     _keyboardEventEmitter = KeyboardEventEmitter();
-    _node.onKeyEvent = (_, event) {
-      _keyboardEventEmitter.emit(event);
+    _node.onKeyEvent = (node, event) {
+      _keyboardEventEmitter.emit(
+        event,
+        HardwareKeyboard.instance.logicalKeysPressed,
+      );
 
       return KeyEventResult.handled;
     };
